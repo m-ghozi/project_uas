@@ -66,7 +66,7 @@ void readLDR() {
   // We'll have a few threshholds, qualitatively determined
   if (analogValue < 100) {
     Serial.println(" = Gelap");
-    Blynk.virtualWrite(V4, 1; // Akan menampilkan 1 di blynk
+    Blynk.virtualWrite(V4, 1); // Akan menampilkan 1 di blynk
   } else {
     Serial.println(" = Terang");
     Blynk.virtualWrite(V4, 0); // Akan menampilkan 0 di blynk
