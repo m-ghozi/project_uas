@@ -64,18 +64,13 @@ void readLDR() {
   Serial.print(analogValue);   // the raw analog reading
 
   // We'll have a few threshholds, qualitatively determined
-  if (analogValue < 40) {
-    Serial.println(" => Dark");
-  } else if (analogValue < 800) {
-    Serial.println(" => Dim");
-  } else if (analogValue < 2000) {
-    Serial.println(" => Light");
-  } else if (analogValue < 3200) {
-    Serial.println(" => Bright");
+  if (analogValue < 100) {
+    Serial.println(" = Gelap");
+    Blynk.virtualWrite(V4, 1; // Akan menampilkan 1 di blynk
   } else {
-    Serial.println(" => Very bright");
+    Serial.println(" = Terang");
+    Blynk.virtualWrite(V4, 0); // Akan menampilkan 0 di blynk
   }
-
   delay(500);
 }
 
