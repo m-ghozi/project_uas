@@ -17,6 +17,7 @@ char ssid[] = "Mi";
 char pass[] = "12345678900";
 
 // Define Pin
+const int ldrPin = 35;
 const int triggerPin_1 = 13;
 const int echoPin_1 = 12;
 unsigned int duration_1;
@@ -37,8 +38,8 @@ void setup() {
   Serial.println(ssid);
 
   while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      Serial.print(".");
+    delay(500);
+    Serial.print(".");
   }
 
   Serial.println("");
@@ -49,12 +50,34 @@ void setup() {
 
 void loop() {
   Blynk.run();
+  readLDR();
   readSensor_1();
   readSensor_2();
   Serial.println(" ");
   delay(1000);
 }
 
+void readLDR() {
+  int analogValue = analogRead(ldrPin);
+
+  Serial.print("Analog Value = ");
+  Serial.print(analogValue);   // the raw analog reading
+
+  // We'll have a few threshholds, qualitatively determined
+  if (analogValue < 40) {
+    Serial.println(" => Dark");
+  } else if (analogValue < 800) {
+    Serial.println(" => Dim");
+  } else if (analogValue < 2000) {
+    Serial.println(" => Light");
+  } else if (analogValue < 3200) {
+    Serial.println(" => Bright");
+  } else {
+    Serial.println(" => Very bright");
+  }
+
+  delay(500);
+}
 
 void readSensor_1() {
   digitalWrite(triggerPin_1, LOW);
