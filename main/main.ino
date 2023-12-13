@@ -6,7 +6,7 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-
+#include <RBDdimmer.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
@@ -26,6 +26,13 @@ const int triggerPin_2 = 17;
 const int echoPin_2 = 16;
 unsigned int duration_2;
 unsigned int distance_2;
+unsigned int ultrasonicValue;
+
+#define outputPin  23
+#define zerocross  5 // for boards with CHANGEBLE input pins
+
+dimmerLamp dimmer(outputPin, zerocross); //initialase port for dimmer for ESP8266, ESP32, Arduino due boards
+//dimmerLamp dimmer(outputPin); //initialase port for dimmer for MEGA, Leonardo, UNO, Arduino M0, Arduino Zero
 
 void setup() {
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
@@ -46,6 +53,7 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  dimmer.begin(NORMAL_MODE, OFF); //dimmer initialisation: name.begin(MODE, STATE) 
 }
 
 void loop() {
@@ -53,6 +61,7 @@ void loop() {
   readLDR();
   readSensor_1();
   readSensor_2();
+  setDimmer();
   Serial.println(" ");
   delay(1000);
 }
@@ -64,7 +73,7 @@ void readLDR() {
   Serial.print(analogValue);   // the raw analog reading
 
   // We'll have a few threshholds, qualitatively determined
-  if (analogValue < 100) {
+  if (analogValue < 50) {
     Serial.println(" = Gelap");
     Blynk.virtualWrite(V4, 1); // Akan menampilkan 1 di blynk
   } else {
@@ -109,4 +118,25 @@ void readSensor_2() {
   } else{
     Blynk.virtualWrite(V3, 0);
   }
+}
+
+void setDimmer() {
+  int analogValue = analogRead(ldrPin);
+  if (distance_1 <= 15 || distance_2 <= 15){
+    ultrasonicValue = 1;
+  } else {
+    ultrasonicValue = 0;
+  }
+  if (ultrasonicValue == 1 && analogValue < 50) {
+    dimmer.setState(ON);
+    dimmer.setPower(60);
+  }
+    if (analogValue > 50) {
+    dimmer.setState(OFF);
+  }
+    if (ultrasonicValue == 0 && analogValue < 50) {
+    dimmer.setState(ON);
+    dimmer.setPower(2);
+  }
+  
 }
