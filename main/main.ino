@@ -11,6 +11,7 @@
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
 
+
 // Your WiFi credentials.
 // Set password to "" for open networks.
 char ssid[] = "Mi";
@@ -62,18 +63,16 @@ void loop() {
   readSensor_1();
   readSensor_2();
   setDimmer();
-  Serial.println(" ");
-  delay(1000);
+  delay (100);
 }
 
 void readLDR() {
   int analogValue = analogRead(ldrPin);
-
   Serial.print("Analog Value = ");
   Serial.print(analogValue);   // the raw analog reading
 
   // We'll have a few threshholds, qualitatively determined
-  if (analogValue < 50) {
+  if (analogValue < 25) {
     Serial.println(" = Gelap");
     Blynk.virtualWrite(V4, 1); // Akan menampilkan 1 di blynk
   } else {
@@ -127,16 +126,15 @@ void setDimmer() {
   } else {
     ultrasonicValue = 0;
   }
-  if (ultrasonicValue == 1 && analogValue < 50) {
+  if (ultrasonicValue == 1 && analogValue < 25) {
     dimmer.setState(ON);
     dimmer.setPower(60);
   }
     if (analogValue > 50) {
     dimmer.setState(OFF);
   }
-    if (ultrasonicValue == 0 && analogValue < 50) {
+    if (ultrasonicValue == 0 && analogValue < 25) {
     dimmer.setState(ON);
     dimmer.setPower(2);
   }
-  
 }
